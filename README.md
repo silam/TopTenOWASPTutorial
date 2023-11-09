@@ -81,3 +81,37 @@ public class AccountController : Controller​
     }    ​ 
 }
 ```
+
+## 2-Cryptographic Failures
+
+Cryptographic failures are failures related to cryptography (or lack thereof) that often leads to sensitive data exposure or system compromise.
+
+Implementation mistakes leading to unexpected cryptographic errors. Firstly, let's being with distinguishing between encoding, encryption and hashing in general programming terms.
+
+Encoding a value helps transmit data in a channel, such as base 64 encoding over HTTP, but doesn't provide security. It changes the format of a value so that it obstructs but not protects the value. 
+
+Encryption is a reversible operation that translates text into what may seem a random and meaningless cypher. To decrypt the value an encryption key is needed. 
+
+Hashing is a one-way operation of mapping input data into fixed-size values (value hash). There's no way to reverse hash a value.
+
+### 2.1-Encryption
+```
+// Using Advanced Encryption Standard class
+// to create a key and Initialization Vector
+// to encrypt any type of managed stream, then the stream is wrapped with CryptoStream.
+
+Aes aes = Aes.Create();​
+CryptoStream cryptStream = new CryptoStream(fileStream,
+                                           ​aes.CreateEncryptor(aes.Key, aes.VI),​
+                                           CryptoStreamMode. Write);
+```
+
+### 2.2-Hashing
+```
+public static byte[] HashPassword256(string password)​
+{​
+    System.Security.Cryptography.SHA256 mySHA256 = System.Security.Cryptography.SHA256.Create();​
+    var encoding = new System.Text.UnicodeEncoding();​
+    return mySHA256.ComputeHash(encoding.GetBytes(password));​
+}
+```
