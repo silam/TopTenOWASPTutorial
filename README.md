@@ -115,3 +115,84 @@ public static byte[] HashPassword256(string password)​
     return mySHA256.ComputeHash(encoding.GetBytes(password));​
 }
 ```
+
+## 3-Injection
+Option 1: Use of Prepared Statements (with Parameterized Queries)
+<br />
+Option 2: Use of Properly Constructed Stored Procedures
+<br />
+Option 3: Allow-list Input Validation
+<br />
+Option 4: Escaping All User Supplied Input
+<br />
+
+### 3.1-Use of Prepared Statements
+```
+String query = "SELECT account_balance FROM user_data WHERE user_name = ?";
+try {
+  OleDbCommand command = new OleDbCommand(query, connection);
+  command.Parameters.Add(new OleDbParameter("customerName", CustomerName Name.Text));
+  OleDbDataReader reader = command.ExecuteReader();
+  // …
+} catch (OleDbException se) {
+  // error handling
+}
+```
+
+### 3.2-Use of Properly Constructed Stored Procedures
+
+```
+// This should REALLY be validated
+String custname = request.getParameter("customerName");
+try {
+  CallableStatement cs = connection.prepareCall("{call sp_getAccountBalance(?)}");
+  cs.setString(1, custname);
+  ResultSet results = cs.executeQuery();
+  // … result set handling
+} catch (SQLException se) {
+  // … logging and error handling
+}
+```
+
+### 3.3-Allow-list Input Validation
+
+```
+String tableName;
+switch(PARAM):
+  case "Value1": tableName = "fooTable";
+                 break;
+  case "Value2": tableName = "barTable";
+                 break;
+  ...
+  default      : throw new InputValidationException("unexpected value provided"
+                                                  + " for table name");
+```
+
+
+```
+public String someMethod(boolean sortOrder) {
+ String SQLquery = "some SQL ... order by Salary " + (sortOrder ? "ASC" : "DESC");
+```
+
+### 3.4-Escaping All User Supplied Input
+
+Each DBMS supports one or more character escaping schemes specific to certain kinds of queries. If you then escape all user supplied input using the proper escaping scheme for the database you are using, the DBMS will not confuse that input with SQL code written by the developer, thus avoiding any possible SQL injection vulnerabilities.
+
+```
+String query = "SELECT user_id FROM user_data WHERE user_name = '"
+              + req.getParameter("userID")
+              + "' and user_password = '" + req.getParameter("pwd") +"'";
+try {
+    Statement statement = connection.createStatement( … );
+    ResultSet results = statement.executeQuery( query );
+}
+```
+
+
+```
+Codec ORACLE_CODEC = new OracleCodec();
+String query = "SELECT user_id FROM user_data WHERE user_name = '"
++ ESAPI.encoder().encodeForSQL( ORACLE_CODEC, req.getParameter("userID"))
++ "' and user_password = '"
++ ESAPI.encoder().encodeForSQL( ORACLE_CODEC, req.getParameter("pwd")) +"'";
+```
