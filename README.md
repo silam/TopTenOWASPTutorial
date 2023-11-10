@@ -196,3 +196,15 @@ String query = "SELECT user_id FROM user_data WHERE user_name = '"
 + "' and user_password = '"
 + ESAPI.encoder().encodeForSQL( ORACLE_CODEC, req.getParameter("pwd")) +"'";
 ```
+
+## 4-Insecure Design
+
+### Security Principles
+
+### 4.1-The principle of Least Privilege and Separation of Duties
+### 4.2-The principle of Defense-in-Depth¶
+### 4.3-The principle of Zero Trust¶
+### 4.4-The principle of Security-in-the-Open¶
+
+
+## 5-Security Misconfiguration
