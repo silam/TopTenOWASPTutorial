@@ -257,6 +257,73 @@ DO: Run the OWASP Dependency Checker against your application as part of your bu
 DO: Include SCA (software composition analysis) tools in your CI/CD pipeline to ensure that any new vulnerabilities in your dependencies are detected and acted upon.
 
 ## 7-Identification and Authentication Failures
+
+DO: Use ASP.NET Core Identity. ASP.NET Core Identity framework is well configured by default, where it uses secure password hashes and an individual salt. Identity uses the PBKDF2 hashing function for passwords, and generates a random salt per user.
+
+DO: Set secure password policy
+
+```
+//Startup.cs
+services.Configure<IdentityOptions>(options =>
+{
+ // Password settings
+ options.Password.RequireDigit = true;
+ options.Password.RequiredLength = 8;
+ options.Password.RequireNonAlphanumeric = true;
+ options.Password.RequireUppercase = true;
+ options.Password.RequireLowercase = true;
+ options.Password.RequiredUniqueChars = 6;
+
+ options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+ options.Lockout.MaxFailedAccessAttempts = 3;
+
+ options.SignIn.RequireConfirmedEmail = true;
+
+ options.User.RequireUniqueEmail = true;
+});
+```
+
+DO: Set a cookie policy
+
+
+
+```
+//Startup.cs
+services.ConfigureApplicationCookie(options =>
+{
+ options.Cookie.HttpOnly = true;
+ options.Cookie.Expiration = TimeSpan.FromHours(1)
+ options.SlidingExpiration = true;
+});
+```
 ## 8-Software and Data Integrity Failures
+DO: Digitally sign assemblies and executable files
+
+DO: Use Nuget package signing
+
+DO: Review code and configuration changes to avoid malicious code or dependencies being introduced
+
+DO NOT: Send unsigned or unencrypted serialized objects over the network
+
+DO: Perform integrity checks or validate digital signatures on serialized objects received from the network
 ## 9-Security Logging and Monitoring Failures
+
+DO: Ensure all login, access control, and server-side input validation failures are logged with sufficient user context to identify suspicious or malicious accounts.
+
+DO: Establish effective monitoring and alerting so suspicious activities are detected and responded to in a timely fashion.
+
+DO NOT: Log generic error messages such as: csharp Log.Error("Error was thrown");. Instead, log the stack trace, error message and user ID who caused the error.
+
+DO NOT: Log sensitive data such as user's passwords.
+
 ## 10-Server-Side Request Forgery
+
+DO: Validate and sanitize all user input before using it to make a request
+
+DO: Use an allow list of allowed protocols and domains
+
+DO: Use IPAddress.TryParse() and Uri.CheckHostName() to ensure that IP addresses and domain names are valid
+
+DO NOT: Follow HTTP redirects
+
+DO NOT: Forward raw HTTP responses to the user
