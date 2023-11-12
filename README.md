@@ -208,3 +208,55 @@ String query = "SELECT user_id FROM user_data WHERE user_name = '"
 
 
 ## 5-Security Misconfiguration
+
+### 5.1-Debug and Stack Trace
+
+```
+<compilation xdt:Transform="RemoveAttributes(debug)" />
+<trace enabled="false" xdt:Transform="Replace"/>
+```
+
+### 5.2-Cross-site request forgery
+
+DO NOT: Send sensitive data without validating Anti-Forgery-Tokens (.NET / .NET Core).
+
+DO: Send the anti-forgery token with every POST/PUT request:
+
+```
+using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm",
+                        @class = "pull-right" }))
+{
+    @Html.AntiForgeryToken()
+    <ul class="nav nav-pills">
+        <li role="presentation">
+        Logged on as @User.Identity.Name
+        </li>
+        <li role="presentation">
+        <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        </li>
+    </ul>
+}
+```
+
+Then validate it at the method or preferably the controller level:
+
+
+```
+[HttpPost]
+[ValidateAntiForgeryToken]
+public ActionResult LogOff(
+```
+## 6-Vulnerable and Outdated Components
+
+DO: Keep the .NET framework updated with the latest patches
+
+DO: Keep your NuGet packages up to date
+
+DO: Run the OWASP Dependency Checker against your application as part of your build process and act on any high or critical level vulnerabilities.
+
+DO: Include SCA (software composition analysis) tools in your CI/CD pipeline to ensure that any new vulnerabilities in your dependencies are detected and acted upon.
+
+## 7-Identification and Authentication Failures
+## 8-Software and Data Integrity Failures
+## 9-Security Logging and Monitoring Failures
+## 10-Server-Side Request Forgery
