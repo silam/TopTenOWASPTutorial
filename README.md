@@ -1,84 +1,95 @@
 # Top Ten OWASP in software security
 
 ## 1-Broken Access Control
+
 ## 2-Cryptographic Failures
+
 ## 3-Injection
+
 ## 4-Insecure Design
+
 ## 5-Security Misconfiguration
+
 ## 6-Vulnerable and Outdated Components
+
 ## 7-Identification and Authentication Failures
+
 ## 8-Software and Data Integrity Failures
+
 ## 9-Security Logging and Monitoring Failures
+
 ## 10-Server-Side Request Forgery
 
 <br />
 <br />
 
 ## 1-Broken Access Control
+
 <br />
 
 Plain ASP.NET controller with no authorization attributes, no access restrictions applied.
-<br/>
+`<br/>`
 
 ```
-public class AccountController : Controller​
-{​
-    public ActionResult Login()​
+public class AccountController : Controller
+{
+    public ActionResult Login()
     {
     }
 
-    public ActionResult Logout()​
+    public ActionResult Logout()
     {
     }
 
-    public ActionResult<string> GetAccountBalance()​
+    public ActionResult<string> GetAccountBalance()
     {
     }
 }
 ```
+
 <br/>
 
 Controller with authorization attributes, based on policy or role assignments. Authorized caller is able to invoke the GetCitizenTaxId method.
 
 ```
-[Authorize(Policy="", Roles="")]​
-public class AccountController : Controller​
-{​
-    [AllowAnonymous]​
-    public ActionResult Login()​            
+[Authorize(Policy="", Roles="")]
+public class AccountController : Controller
+{
+    [AllowAnonymous]
+    public ActionResult Login()        
     {
     }
 
-    public ActionResult Logout()​            
+    public ActionResult Logout()        
     {
     }
 
     [Authorize]
-    public ActionResult<string> GetAccountBalance()​
+    public ActionResult<string> GetAccountBalance()
     {
     }
-}​
+}
 ```
 
 ```
-<AuthorizeView Roles="admin, superuser">​
-    <Authorized>​
-        <h1>Hello, @context.User.Identity.Name!</h1>​
-        <p>You can only get account balance if you are authorized.</p>​
-        <button @onclick="SecureMethod">Authorized Only Button</button>​
-    </Authorized>​
-    <NotAuthorized>​
-        <h1>Authentication Failure!</h1>​
-        <p>You are not signed in.</p>​
-    </NotAuthorized>​
-</AuthorizeView>​
+<AuthorizeView Roles="admin, superuser">
+    <Authorized>
+        <h1>Hello, @context.User.Identity.Name!</h1>
+        <p>You can only get account balance if you are authorized.</p>
+        <button @onclick="SecureMethod">Authorized Only Button</button>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Authentication Failure!</h1>
+        <p>You are not signed in.</p>
+    </NotAuthorized>
+</AuthorizeView>
 
-@code { ​
+@code { 
 
-    private void SecureMethod() ​
-    { ​
+    private void SecureMethod() 
+    { 
         // Invoked only upon successful authorization
-    }    ​ 
+    }   
 }
 ```
 
@@ -88,45 +99,49 @@ Cryptographic failures are failures related to cryptography (or lack thereof) th
 
 Implementation mistakes leading to unexpected cryptographic errors. Firstly, let's being with distinguishing between encoding, encryption and hashing in general programming terms.
 
-Encoding a value helps transmit data in a channel, such as base 64 encoding over HTTP, but doesn't provide security. It changes the format of a value so that it obstructs but not protects the value. 
+Encoding a value helps transmit data in a channel, such as base 64 encoding over HTTP, but doesn't provide security. It changes the format of a value so that it obstructs but not protects the value.
 
-Encryption is a reversible operation that translates text into what may seem a random and meaningless cypher. To decrypt the value an encryption key is needed. 
+Encryption is a reversible operation that translates text into what may seem a random and meaningless cypher. To decrypt the value an encryption key is needed.
 
 Hashing is a one-way operation of mapping input data into fixed-size values (value hash). There's no way to reverse hash a value.
 
 ### 2.1-Encryption
+
 ```
 // Using Advanced Encryption Standard class
 // to create a key and Initialization Vector
 // to encrypt any type of managed stream, then the stream is wrapped with CryptoStream.
 
-Aes aes = Aes.Create();​
+Aes aes = Aes.Create();
 CryptoStream cryptStream = new CryptoStream(fileStream,
-                                           ​aes.CreateEncryptor(aes.Key, aes.VI),​
+                                           aes.CreateEncryptor(aes.Key, aes.VI),
                                            CryptoStreamMode. Write);
 ```
 
 ### 2.2-Hashing
+
 ```
-public static byte[] HashPassword256(string password)​
-{​
-    System.Security.Cryptography.SHA256 mySHA256 = System.Security.Cryptography.SHA256.Create();​
-    var encoding = new System.Text.UnicodeEncoding();​
-    return mySHA256.ComputeHash(encoding.GetBytes(password));​
+public static byte[] HashPassword256(string password)
+{
+    System.Security.Cryptography.SHA256 mySHA256 = System.Security.Cryptography.SHA256.Create();
+    var encoding = new System.Text.UnicodeEncoding();
+    return mySHA256.ComputeHash(encoding.GetBytes(password));
 }
 ```
 
 ## 3-Injection
+
 Option 1: Use of Prepared Statements (with Parameterized Queries)
-<br />
+`<br />`
 Option 2: Use of Properly Constructed Stored Procedures
-<br />
+`<br />`
 Option 3: Allow-list Input Validation
-<br />
+`<br />`
 Option 4: Escaping All User Supplied Input
-<br />
+`<br />`
 
 ### 3.1-Use of Prepared Statements
+
 ```
 String query = "SELECT account_balance FROM user_data WHERE user_name = ?";
 try {
@@ -168,7 +183,6 @@ switch(PARAM):
                                                   + " for table name");
 ```
 
-
 ```
 public String someMethod(boolean sortOrder) {
  String SQLquery = "some SQL ... order by Salary " + (sortOrder ? "ASC" : "DESC");
@@ -188,7 +202,6 @@ try {
 }
 ```
 
-
 ```
 Codec ORACLE_CODEC = new OracleCodec();
 String query = "SELECT user_id FROM user_data WHERE user_name = '"
@@ -202,12 +215,16 @@ String query = "SELECT user_id FROM user_data WHERE user_name = '"
 ### Security Principles
 
 ### 4.1-The principle of Least Privilege and Separation of Duties
+
 ### 4.2-The principle of Defense-in-Depth¶
+
 ### 4.3-The principle of Zero Trust¶
+
 ### 4.4-The principle of Security-in-the-Open¶
 
-
 ## 5-Security Misconfiguration
+
+A security misconfiguration is a  **flaw or weakness in a system or application that occurs due to improper setup, negligence in maintaining robust security protocols, or unintended oversight in the configuration process** . These misconfigurations can lead to unauthorized access, data breaches, and other security incidents.
 
 ### 5.1-Debug and Stack Trace
 
@@ -240,13 +257,15 @@ using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutFo
 
 Then validate it at the method or preferably the controller level:
 
-
 ```
 [HttpPost]
 [ValidateAntiForgeryToken]
 public ActionResult LogOff(
 ```
+
 ## 6-Vulnerable and Outdated Components
+
+A vulnerable and outdated component is a  **software component that is no longer being supported by the developer** , making it susceptible to security vulnerabilities. Many times, a component has known vulnerabilities that don’t get fixed due to a lack of maintainer.
 
 DO: Keep the .NET framework updated with the latest patches
 
@@ -257,6 +276,8 @@ DO: Run the OWASP Dependency Checker against your application as part of your bu
 DO: Include SCA (software composition analysis) tools in your CI/CD pipeline to ensure that any new vulnerabilities in your dependencies are detected and acted upon.
 
 ## 7-Identification and Authentication Failures
+
+Identification and authentication failures can occur when functions related to a user's identity, authentication, or session management are not implemented correctly or not adequately protected by an application. Attackers may be able to exploit identification and authentication failures by compromising passwords, keys, session tokens, or exploit other implementation flaws to assume other users' identities, either temporarily or permanently.
 
 DO: Use ASP.NET Core Identity. ASP.NET Core Identity framework is well configured by default, where it uses secure password hashes and an individual salt. Identity uses the PBKDF2 hashing function for passwords, and generates a random salt per user.
 
@@ -285,8 +306,6 @@ services.Configure<IdentityOptions>(options =>
 
 DO: Set a cookie policy
 
-
-
 ```
 //Startup.cs
 services.ConfigureApplicationCookie(options =>
@@ -296,7 +315,16 @@ services.ConfigureApplicationCookie(options =>
  options.SlidingExpiration = true;
 });
 ```
+
 ## 8-Software and Data Integrity Failures
+
+Software and data integrity failures relate to code and infrastructure that does not protect against integrity violations. This can occur when you use software from untrusted sources and repositories or even software that has been tampered with at the source, in transit, or even the endpoint cache. Attackers can exploit this to potentially introduce unauthorized access, malicious code, or system compromise as part of the following attacks:
+
+* Cache Poisoning
+* Code injection
+* Command execution
+* Denial of Service
+
 DO: Digitally sign assemblies and executable files
 
 DO: Use Nuget package signing
@@ -306,7 +334,14 @@ DO: Review code and configuration changes to avoid malicious code or dependencie
 DO NOT: Send unsigned or unencrypted serialized objects over the network
 
 DO: Perform integrity checks or validate digital signatures on serialized objects received from the network
+
 ## 9-Security Logging and Monitoring Failures
+
+
+Security Logging and Monitoring failures have no direct vulnerabilities that can be exploited but this doesnot mean that logging and monitoring is any less critical.
+
+Insufficient logging and monitoring of systems can impact visibility, incident alerting, login failures, system failures and breaches. This makes it essential to have a fully operational logging and monitoring system to collect logs and give out alerts to Security Operation Center (SOC) staff and administrators. It is also important to perform checks on a regular basis to ensure all the correct systems are logging as expected — you donot want valuable logs to be missing from your firewall.
+
 
 DO: Ensure all login, access control, and server-side input validation failures are logged with sufficient user context to identify suspicious or malicious accounts.
 
@@ -317,6 +352,10 @@ DO NOT: Log generic error messages such as: csharp Log.Error("Error was thrown")
 DO NOT: Log sensitive data such as user's passwords.
 
 ## 10-Server-Side Request Forgery
+
+Server-side request forgery is a web security vulnerability that allows an attacker to cause the server-side application to make requests to an unintended location.
+
+In a typical SSRF attack, the attacker might cause the server to make a connection to internal-only services within the organization's infrastructure. In other cases, they may be able to force the server to connect to arbitrary external systems. This could leak sensitive data, such as authorization credentials.
 
 DO: Validate and sanitize all user input before using it to make a request
 
